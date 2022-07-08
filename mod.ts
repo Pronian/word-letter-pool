@@ -49,7 +49,9 @@ function findWords(
   return words;
 }
 
-const input = "[toalm]1[tia]2[ea]1r[ea]1lly"; // "Literally"
+const input = Deno.args[0];
 
-const foundWords = findWords(input, loadWords());
-console.log("found", foundWords);
+if (input) {
+  const foundWords = findWords(input, loadWords());
+  console.log("found", foundWords);
+}
