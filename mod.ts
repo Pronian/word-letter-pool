@@ -1,25 +1,55 @@
 import { loadWords } from "./dictionary.ts";
 import { inputToLetterPools, poolsToPermutations } from "./letter_pools.ts";
 
-const allWords = loadWords();
+/**
+ * Merges an array of permutations into an array of words.
+ * @param permutations An array of string arrays which represent word permutations
+ * @returns an array of words
+ */
+function mergeWordPermutations(permutations: string[][]) {
+  const resultPerms: string[] = [];
 
-const searchStr = "[toalm]1[tia]2[ea]1r[ea]1lly"; // "Literally"
+  function getMerged(arr: string[][], start = 0, acc = "") {
+    if (start >= arr.length) return acc;
 
-const pools = inputToLetterPools(searchStr);
-console.log("Letter pools", pools);
-const poolPermutations = poolsToPermutations(pools);
-console.log("Pool permutations", poolPermutations);
-
-const resultComb: string[] = [];
-function getMerged(arr: string[][], start = 0, acc = "") {
-  if (start >= arr.length) return acc;
-
-  for (const letter of arr[start]) {
-    const merged = getMerged(arr, start + 1, acc + letter);
-    if (merged) resultComb.push(merged);
+    for (const letter of arr[start]) {
+      const merged = getMerged(arr, start + 1, acc + letter);
+      if (merged) resultPerms.push(merged);
+    }
   }
+
+  getMerged(permutations);
+
+  return resultPerms;
 }
 
-getMerged(poolPermutations);
-const foundWords = allWords.filter((word) => resultComb.includes(word));
+function findWords(
+  searchStr: string,
+  dictionaryWords: string[],
+  debug = false,
+) {
+  const pools = inputToLetterPools(searchStr);
+
+  if (debug) {
+    console.debug("Letter pools:", pools);
+  }
+
+  const permutations = poolsToPermutations(pools);
+
+  if (debug) {
+    console.debug("Pool permutations:", permutations);
+  }
+
+  const wordPermutations = mergeWordPermutations(permutations);
+
+  const words = dictionaryWords.filter((word) =>
+    wordPermutations.includes(word)
+  );
+
+  return words;
+}
+
+const input = "[toalm]1[tia]2[ea]1r[ea]1lly"; // "Literally"
+
+const foundWords = findWords(input, loadWords());
 console.log("found", foundWords);
