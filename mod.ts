@@ -23,7 +23,7 @@ function mergeWordPermutations(permutations: string[][]) {
   return resultPerms;
 }
 
-function findWords(
+export function findWords(
   searchStr: string,
   dictionaryWords: string[],
   debug = false,
