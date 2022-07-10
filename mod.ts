@@ -1,5 +1,10 @@
 import { loadWords } from "./dictionary.ts";
 import { inputToLetterPools, poolsToPermutations } from "./letter_pools.ts";
+import {
+  bold,
+  green,
+  red,
+} from "std/fmt/colors.ts";
 
 /**
  * Merges an array of permutations into an array of words.
@@ -53,5 +58,10 @@ const input = Deno.args[0];
 
 if (input) {
   const foundWords = findWords(input, loadWords());
-  console.log("found", foundWords);
+  if (foundWords.length > 0) {
+    console.log(bold("Found words:"));
+    console.log(foundWords.map((w, i) => `  ${i+1}. ${green(w)}`).join("\n"));
+  } else {
+    console.log(red(bold("No words found!")));
+  }
 }
