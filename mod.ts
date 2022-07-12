@@ -1,28 +1,10 @@
 import { loadWords } from "./dictionary.ts";
-import { inputToLetterPools, poolsToPermutations } from "./letter_pools.ts";
+import {
+  inputToLetterPools,
+  wordLengthFromLetterPools,
+  wordMatchesLetterPools,
+} from "./letter_pools.ts";
 import { bold, green, red } from "std/fmt/colors.ts";
-
-/**
- * Merges an array of permutations into an array of words.
- * @param permutations An array of string arrays which represent word permutations
- * @returns an array of words
- */
-function mergeWordPermutations(permutations: string[][]) {
-  const resultPerms: string[] = [];
-
-  function getMerged(arr: string[][], start = 0, acc = "") {
-    if (start >= arr.length) return acc;
-
-    for (const letter of arr[start]) {
-      const merged = getMerged(arr, start + 1, acc + letter);
-      if (merged) resultPerms.push(merged);
-    }
-  }
-
-  getMerged(permutations);
-
-  return resultPerms;
-}
 
 export function findWords(
   searchStr: string,
@@ -35,17 +17,18 @@ export function findWords(
     console.debug("Letter pools:", pools);
   }
 
-  const permutations = poolsToPermutations(pools);
+  const poolWordLength = wordLengthFromLetterPools(pools);
+  const wordsMatchingLength = dictionaryWords.filter((word) =>
+    word.length === poolWordLength
+  );
+
+  const words = wordsMatchingLength.filter((word) =>
+    wordMatchesLetterPools(word, pools)
+  );
 
   if (debug) {
-    console.debug("Pool permutations:", permutations);
+    console.log("Found words:", words);
   }
-
-  const wordPermutations = mergeWordPermutations(permutations);
-
-  const words = dictionaryWords.filter((word) =>
-    wordPermutations.includes(word)
-  );
 
   return words;
 }

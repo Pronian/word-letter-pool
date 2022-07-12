@@ -3,7 +3,7 @@
  * @returns - An array of words.
  */
 export function loadWords() {
-  const dirname = new URL('.', import.meta.url).pathname;
+  const dirname = new URL(".", import.meta.url).pathname;
 
   // Use dictionary from https://github.com/dwyl/english-words
   const allWords = Deno.readTextFileSync(`${dirname}/words_alpha.txt`)
